@@ -7,6 +7,7 @@ import {
   ListItemText,
   Button,
   Modal,
+  InputAdornment,
 } from "@mui/material";
 import { addNewStock } from "../../api/stock";
 import GeneralModal from "../../components/Modal";
@@ -17,6 +18,8 @@ import {
   getAvailableStocks,
   handleActiveStock,
 } from "../../redux/actions/user";
+import SearchIcon from "@mui/icons-material/Search";
+import { SearchBox, StockListItem } from "../../components/Components";
 
 function StockList({ user }) {
   const InitState = {
@@ -30,9 +33,9 @@ function StockList({ user }) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    setFilteredStocks(user.availableStocks)
-    setSearchTerm("")
-  }, [user.availableStocks])
+    setFilteredStocks(user.availableStocks);
+    setSearchTerm("");
+  }, [user.availableStocks]);
 
   // New Stock
   const [openModal, setOpenModal] = useState(false);
@@ -153,20 +156,26 @@ function StockList({ user }) {
   };
 
   return (
-    <Box sx={{ backgroundColor: "#f0f0f0", overflowY: "auto", height: "100%" }}>
+    <Box sx={{ backgroundColor: "#f0f0f0", overflowY: "auto", height: "100vh", position: 'relative' }}>
       <Box p={2}>
-        <TextField
-          label="Search"
-          variant="outlined"
+        <SearchBox
           fullWidth
           value={searchTerm}
           onChange={handleSearchChange}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+            disableUnderline: true,
+          }}
         />
       </Box>
 
-      <List>
+      <List style={{ width: "100%"}}>
         {filteredStocks.map((stock) => (
-          <ListItem
+          <StockListItem
             style={
               stock == user.activeStock
                 ? { background: "#e5d8f0" }
@@ -176,20 +185,27 @@ function StockList({ user }) {
             onClick={() => handleStockClick(stock)}
           >
             <ListItemText primary={stock.name} />
-          </ListItem>
+          </StockListItem>
         ))}
       </List>
 
-      <Box p={2}>
-        <Button variant="contained" onClick={handleOpenModal}>
-          Add Stock
-        </Button>
+      <Box position={'sticky'} bottom={20} p={2} style={{background: '#f0f0f0'}}>
+        <Box>
+          <Button fullWidth variant="contained" onClick={handleOpenModal}>
+            Add Stock
+          </Button>
+        </Box>
+        <Box paddingTop={2}>
+          <Button
+            fullWidth
+            variant="contained"
+            onClick={() => setOpenCategoryModal(true)}
+          >
+            Add Category
+          </Button>
+        </Box>
       </Box>
-      <Box p={2}>
-        <Button variant="contained" onClick={() => setOpenCategoryModal(true)}>
-          Add Category
-        </Button>
-      </Box>
+
       {renderStockAddModal()}
       {renderCategoryAddModal()}
     </Box>
