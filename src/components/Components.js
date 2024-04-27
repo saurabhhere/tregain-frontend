@@ -1,6 +1,6 @@
 import * as React from "react";
 import { styled } from "@mui/material/styles";
-import { ListItem, TextField } from "@mui/material";
+import { Box, ListItem, TextField, Typography } from "@mui/material";
 
 export const SearchBox = styled(TextField)(({ theme }) => ({
   border: "none",
@@ -17,6 +17,15 @@ export const SearchBox = styled(TextField)(({ theme }) => ({
   }
 }));
 
+export const CategoryListItem = styled(Box)(({ theme }) => ({
+    background: '#ffd88d',
+    padding: 5,
+    borderRadius: 4,
+    margin: 4,
+    fontWeight: 500,
+    fontSize: theme.typography.pxToRem(14),
+}));
+
 
 export const StockListItem = styled(ListItem)(({ theme }) => ({
     margin: 5,
@@ -26,4 +35,13 @@ export const StockListItem = styled(ListItem)(({ theme }) => ({
     },
     width: 'auto',
     borderRadius: 4
+}));
+
+export const SectionBox = styled(Box)(({ theme }) => ({
+    margin: 5,
+    marginLeft: 0
+}));
+
+export const SectionBoxHeading = styled(Typography)(({ theme }) => ({
+    fontWeight: 500
 }));
