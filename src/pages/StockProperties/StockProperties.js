@@ -231,7 +231,7 @@ const StockProperties = ({ user }) => {
               ref={contentRef}
               style={{
                 overflow: "hidden",
-                height: showReadMore ? "30vh" : "auto",
+                height: showReadMore && (properties.fundamentals || properties.technicals) ? "30vh" : "auto",
                 transition: "height 2s",
               }}
             >

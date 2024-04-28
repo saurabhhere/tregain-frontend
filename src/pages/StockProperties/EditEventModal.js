@@ -89,15 +89,17 @@ const EditEventModal = ({ open, onClose, onSubmit, eventId, user, type }) => {
 
   const handleSubmit = () => {
     const data = {
-        description: eventDetails.description,
-        marketPrice: eventDetails.marketPrice,
-        remarks: eventDetails.remarks,
-        link: eventDetails.link,
-        categoryIds: eventDetails.categories.map((item) => item._id),
-        stockIds: eventDetails.stocks.map((item) => item._id),
-      };
-    onSubmit(data);
-    onClose();
+      description: eventDetails.description,
+      marketPrice: eventDetails.marketPrice,
+      remarks: eventDetails.remarks,
+      link: eventDetails.link,
+      categoryIds: eventDetails.categories.map((item) => item._id),
+      stockIds: eventDetails.stocks.map((item) => item._id),
+    };
+    if (data.description != "" && (data.stockIds.length > 0 || data.categoryIds.length > 0 )){
+      onSubmit(data);
+      onClose();
+    }
   };
 
   return (

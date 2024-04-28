@@ -45,3 +45,23 @@ export const SectionBox = styled(Box)(({ theme }) => ({
 export const SectionBoxHeading = styled(Typography)(({ theme }) => ({
     fontWeight: 500
 }));
+
+export const EventBox = styled(Box)(({ theme }) => ({
+  background: '#ebebeb',
+  marginBottom: 10,
+  padding: 5,
+  paddingLeft: 8,
+  borderRadius: 8
+}));
+
+export const FlexBox = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  marginBottom: 5,
+}));
+
+export const GreyText = styled(Typography)(({ theme }) => ({
+  fontSize: theme.typography.pxToRem(15),
+  color: '#616161'
+}));
