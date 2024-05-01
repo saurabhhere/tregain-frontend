@@ -147,7 +147,7 @@ function StockEvents({ user }) {
                 flexDirection={"column"}
                 alignItems={"center"}
               >
-                <Box>
+                <Box display={'flex'}>
                   <IconButton onClick={() => handleOpenLink(event.link)}>
                     <LinkIcon color="primary" />
                   </IconButton>

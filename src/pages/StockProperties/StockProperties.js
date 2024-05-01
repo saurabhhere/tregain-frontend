@@ -11,6 +11,7 @@ import {
   InputLabel,
   Checkbox,
   ListItemText,
+  TextareaAutosize,
 } from "@mui/material";
 import { getStockProperty, updateStockProperty } from "../../api/stockProperty";
 import { getAllCategories } from "../../api/categories";
@@ -45,6 +46,7 @@ const StockProperties = ({ user }) => {
       getStockProperty(user.activeStock._id)
         .then((res) => {
           setProperties(res.data);
+          console.log("funda", res.data.fundamentals.split('\\n'))
           setEditPropertiesForm(res.data);
         })
         .catch((err) => {
@@ -162,27 +164,32 @@ const StockProperties = ({ user }) => {
             ))}
           </Select>
         </FormControl>
-        <TextField
+        <TextareaAutosize
           label="Fundamentals"
+          placeholder="Fundamentals"
           variant="outlined"
           fullWidth
           value={editPropertiesForm.fundamentals}
           onChange={handleChange}
           multiline
-          rows={3}
+          minRows={3}
           name="fundamentals"
-          sx={{ mb: 2 }}
+          color="primary"
+          style={{width: '100%'}}
+          // sx={{ mb: 2 }}
         />
-        <TextField
+        <TextareaAutosize
           label="Technical Analysis"
+          placeholder="Technical Analysis"
           variant="outlined"
           fullWidth
           value={editPropertiesForm.technicals}
           onChange={handleChange}
           multiline
-          rows={3}
+          minRows={3}
           name="technicals"
-          sx={{ mb: 2 }}
+          style={{width: '100%'}}
+          // sx={{ mb: 2 }}
         />
         <TextField
           label="Recommended By"
@@ -238,13 +245,17 @@ const StockProperties = ({ user }) => {
               {properties.fundamentals && (
                 <SectionBox>
                   <SectionBoxHeading>Fundamentals:</SectionBoxHeading>
-                  <Typography>{properties.fundamentals}</Typography>
+                  {properties.fundamentals.split('\n').map((line, index) => 
+                    <Typography key={index}>{line}</Typography>
+                  )}
                 </SectionBox>
               )}
               {properties.technicals && (
                 <SectionBox>
                   <SectionBoxHeading>Technical Analysis:</SectionBoxHeading>
-                  <Typography>{properties.technicals}</Typography>
+                  {properties.technicals.split('\n').map((line, index) => 
+                    <Typography key={index}>{line}</Typography>
+                  )}
                 </SectionBox>
               )}
             </Box>
