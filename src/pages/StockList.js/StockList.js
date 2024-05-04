@@ -47,6 +47,10 @@ function StockList({ user }) {
   const [stockOptions, setStockOptions] = useState([]);
   const [selectedStock, setSelectedStock] = useState(null);
 
+  useEffect(() => {
+    fetchStockOptions()
+  },[])
+
   const fetchStockOptions = async () => {
     try {
       getAllStocks()
