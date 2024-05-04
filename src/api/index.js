@@ -1,10 +1,9 @@
 import axios from "axios";
-// import { createBrowserHistory } from "history";
-
+import { createBrowserHistory } from "history";
 const development = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
 export const BASE_URL = development ? "http://localhost:5000" : "" 
 
-// const customHistory = createBrowserHistory();
+const customHistory = createBrowserHistory();
 
 export const API = axios.create({
   baseURL: BASE_URL,
@@ -42,7 +41,7 @@ API.interceptors.response.use(
   (error) => {
     if (error.response && error.response.status === 401) {
       // Use router.push() to navigate to the login screen
-    //   customHistory.push("/login"); // Adjust the route as needed
+      customHistory.push("/login"); // Adjust the route as needed
       // Throw an exception to stop further execution
       return Promise.reject("Unauthorized");
     }

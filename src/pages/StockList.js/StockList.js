@@ -8,8 +8,9 @@ import {
   Button,
   Modal,
   InputAdornment,
+  Autocomplete,
 } from "@mui/material";
-import { addNewStock } from "../../api/stock";
+import { addNewStock, getAllStocks, getUserStock } from "../../api/stock";
 import GeneralModal from "../../components/Modal";
 import { addNewCategory } from "../../api/categories";
 import { connect, useDispatch } from "react-redux";
@@ -20,11 +21,10 @@ import {
 } from "../../redux/actions/user";
 import SearchIcon from "@mui/icons-material/Search";
 import { SearchBox, StockListItem } from "../../components/Components";
+import { showError, showSnackbar } from "../../redux/actions/auth";
 
 function StockList({ user }) {
   const InitState = {
-    stockSymbol: "",
-    stockName: "",
     categoryName: "",
   };
 
@@ -43,6 +43,25 @@ function StockList({ user }) {
 
   // New Category
   const [openCategoryModal, setOpenCategoryModal] = useState(false);
+
+  const [stockOptions, setStockOptions] = useState([]);
+  const [selectedStock, setSelectedStock] = useState(null);
+
+  const fetchStockOptions = async () => {
+    try {
+      getAllStocks()
+        .then((res) => {
+          console.log("getAllStocks", res.data)
+          setStockOptions(res.data)
+        })
+        .catch((err) => {
+          dispatch(showError(err));
+          console.error("Error while fetching all stocks", err)
+        })
+    } catch (error) {
+      console.error('Error fetching options:', error);
+    }
+  };
 
   const handleChange = (e) => {
     setForm({
@@ -70,24 +89,27 @@ function StockList({ user }) {
 
   const handleOpenModal = () => {
     setOpenModal(true);
+    if (stockOptions.length == 0) fetchStockOptions()
   };
 
   // Close modal
   const handleCloseModal = () => {
     setOpenModal(false);
+    setSelectedStock(null)
   };
 
   const handleSubmit = () => {
-    addNewStock({
-      symbol: form.stockSymbol,
-      name: form.stockName,
-    })
+    addNewStock(selectedStock)
       .then((res) => {
-        dispatch(getAvailableStocks());
+        dispatch(showSnackbar("Added Stock successfully", "success", 4000));
         handleResetForm();
         handleCloseModal();
+        setSelectedStock(null)
+        dispatch(getAvailableStocks());
       })
-      .catch((err) => console.error("error while inserting stock"));
+      .catch((err) => {
+        dispatch(showError(err));
+      });
   };
 
   const handleCategorySubmit = () => {
@@ -96,12 +118,13 @@ function StockList({ user }) {
         name: form.categoryName,
       })
         .then((res) => {
-          dispatch(getAvailableCategories());
+          dispatch(showSnackbar("Added Category successfully", "success", 4000));
           handleResetForm();
           setOpenCategoryModal(false);
+          dispatch(getAvailableCategories());
         })
         .catch((err) => {
-          console.error("Error while adding a new category");
+          dispatch(showError(err));
         });
     }
   };
@@ -113,23 +136,29 @@ function StockList({ user }) {
         onClose={handleCloseModal}
         onSubmit={handleSubmit}
       >
-        <TextField
-          label="Stock Symbol"
-          variant="outlined"
-          fullWidth
-          value={form.stockSymbol}
-          onChange={handleChange}
-          name="stockSymbol"
-          sx={{ mb: 2 }}
-        />
-        <TextField
-          label="Stock Name"
-          variant="outlined"
-          fullWidth
-          value={form.stockName}
-          onChange={handleChange}
-          name="stockName"
-          sx={{ mb: 2 }}
+        <Autocomplete
+          id="stock-select-demo"
+          options={stockOptions}
+          autoHighlight
+          getOptionLabel={(option) => option.name}
+          value={selectedStock}
+          onChange={(event, newValue) => {
+            setSelectedStock(newValue);
+          }}
+          renderOption={(props, option) => (
+            <Box component="li" {...props}>
+              {option.name} ({option.symbol})
+            </Box>
+          )}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Choose a stock"
+              variant="outlined"
+              fullWidth
+            />
+          )}
+          style={{marginBottom : 10}}
         />
       </GeneralModal>
     );
@@ -168,7 +197,6 @@ function StockList({ user }) {
                 <SearchIcon />
               </InputAdornment>
             ),
-            disableUnderline: true,
           }}
         />
       </Box>

@@ -22,9 +22,11 @@ import {
   CategoryListItem,
   SectionBox,
   SectionBoxHeading,
+  StyledTextarea,
 } from "../../components/Components";
 import EditIcon from "@mui/icons-material/Edit";
 import IconButton from "@mui/material/IconButton";
+import { showError, showSnackbar } from "../../redux/actions/auth";
 
 const StockProperties = ({ user }) => {
   const InitState = {
@@ -38,6 +40,7 @@ const StockProperties = ({ user }) => {
   const [editModal, setEditModal] = useState(false);
   const [showReadMore, setShowReadMore] = useState(false);
   const contentRef = useRef(null);
+  const dispatch = useDispatch();
 
   const [editPropertiesForm, setEditPropertiesForm] = useState(InitState);
 
@@ -46,7 +49,6 @@ const StockProperties = ({ user }) => {
       getStockProperty(user.activeStock._id)
         .then((res) => {
           setProperties(res.data);
-          console.log("funda", res.data.fundamentals.split('\\n'))
           setEditPropertiesForm(res.data);
         })
         .catch((err) => {
@@ -114,10 +116,13 @@ const StockProperties = ({ user }) => {
         categories: editPropertiesForm.categories.map((item) => item._id),
       })
         .then((res) => {
+          dispatch(showSnackbar("Updated successfully", "success", 2000));
           fetchStockProperties();
           setEditModal(false);
         })
-        .catch((err) => console.error("Error while updating stock properties"));
+        .catch((err) => {
+          dispatch(showError(err));
+        });
     }
   };
 
@@ -164,7 +169,7 @@ const StockProperties = ({ user }) => {
             ))}
           </Select>
         </FormControl>
-        <TextareaAutosize
+        <StyledTextarea
           label="Fundamentals"
           placeholder="Fundamentals"
           variant="outlined"
@@ -178,7 +183,7 @@ const StockProperties = ({ user }) => {
           style={{width: '100%'}}
           // sx={{ mb: 2 }}
         />
-        <TextareaAutosize
+        <StyledTextarea
           label="Technical Analysis"
           placeholder="Technical Analysis"
           variant="outlined"

@@ -5,7 +5,14 @@ import {
   getStockEvents,
   updateEventById,
 } from "../../api/events";
-import { Box, Typography, Button, Grid, IconButton, InputAdornment } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Button,
+  Grid,
+  IconButton,
+  InputAdornment,
+} from "@mui/material";
 import { connect, useDispatch } from "react-redux";
 import EditEventModal from "./EditEventModal";
 import {
@@ -24,15 +31,19 @@ import {
   SearchBox,
 } from "../../components/Components";
 import SearchIcon from "@mui/icons-material/Search";
+import { showError, showSnackbar } from "../../redux/actions/auth";
 
 function StockEvents({ user }) {
+
+  const dispatch = useDispatch()
+
   const [events, setEvents] = useState([]);
   const [addEventModal, setAddEventModal] = useState(false);
   const [openEditEventModal, setOpenEditEventModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState();
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredEvents, setFilteredEvents] = useState([])
+  const [filteredEvents, setFilteredEvents] = useState([]);
 
   const openAddEventModal = () => {
     setAddEventModal(true);
@@ -45,8 +56,10 @@ function StockEvents({ user }) {
   const handleSearchChange = (event) => {
     const searchTerm = event.target.value.toLowerCase();
     setSearchTerm(searchTerm);
-    const filtered = events.filter((event) =>
-      event.description.toLowerCase().includes(searchTerm) ||  event.remarks.toLowerCase().includes(searchTerm)
+    const filtered = events.filter(
+      (event) =>
+        event.description.toLowerCase().includes(searchTerm) ||
+        event.remarks.toLowerCase().includes(searchTerm)
     );
     setFilteredEvents(filtered);
   };
@@ -54,17 +67,23 @@ function StockEvents({ user }) {
   const handleSubmitEvent = (eventData) => {
     addNewEvent(eventData)
       .then((res) => {
+        dispatch(showSnackbar("Added Event successfully", "success", 2000))
         fetchStockEvents();
       })
-      .catch((err) => console.error("Error while creating new event"));
+      .catch((err) => {
+        dispatch(showError(err));
+      });
   };
 
   const handleUpdateEvent = (eventData) => {
     updateEventById(selectedEvent, eventData)
       .then((res) => {
+        dispatch(showSnackbar("Updated Event successfully", "success", 2000));
         fetchStockEvents();
       })
-      .catch((err) => console.error("Error while Updating event"));
+      .catch((err) => {
+        dispatch(showError(err));
+      });
   };
 
   const fetchStockEvents = () => {
@@ -73,9 +92,10 @@ function StockEvents({ user }) {
         .then((res) => {
           console.log("API CALL: stock events", res.data);
           setEvents(res.data);
-          setFilteredEvents(res.data)
+          setFilteredEvents(res.data);
         })
         .catch((err) => {
+          dispatch(showError(err));
           console.error("Error while fetching stock events");
         });
     }
@@ -89,6 +109,7 @@ function StockEvents({ user }) {
         fetchStockEvents();
       })
       .catch((err) => {
+        dispatch(showError(err));
         console.error("Error while deleting stock events", err);
       });
   };
@@ -114,19 +135,18 @@ function StockEvents({ user }) {
           Events
         </Typography>
         <Box maxWidth={600}>
-        <SearchBox
-          fullWidth
-          value={searchTerm}
-          onChange={handleSearchChange}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
-            ),
-            disableUnderline: true,
-          }}
-        />
+          <SearchBox
+            fullWidth
+            value={searchTerm}
+            onChange={handleSearchChange}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
         </Box>
         <Button variant="outlined" onClick={openAddEventModal}>
           Add Event
@@ -138,16 +158,22 @@ function StockEvents({ user }) {
             <FlexBox key={event._id}>
               <Box display={"flex"}>
                 <Typography variant="subtitle1" marginRight={2}>
-                  {new Date(event.createdAt).toLocaleDateString()}
+                  {new Date(event.eventDate).toLocaleDateString()}
                 </Typography>
-                <Typography variant="subtitle1">{event.description}</Typography>
+                <Box>
+                  {event.description.split("\n").map((line, index) => (
+                    <Typography variant="subtitle1" key={index}>
+                      {line}
+                    </Typography>
+                  ))}
+                </Box>
               </Box>
               <Box
                 display={"flex"}
                 flexDirection={"column"}
                 alignItems={"center"}
               >
-                <Box display={'flex'}>
+                <Box display={"flex"}>
                   <IconButton onClick={() => handleOpenLink(event.link)}>
                     <LinkIcon color="primary" />
                   </IconButton>
@@ -160,7 +186,7 @@ function StockEvents({ user }) {
                     <DeleteIcon color="primary" />
                   </IconButton>
                 </Box>
-                <Typography fontSize={14}>₹{event.marketPrice}</Typography>
+                {event.marketPrice && <Typography fontSize={14}>₹{event.marketPrice}</Typography>}
               </Box>
             </FlexBox>
             {event.remarks && (

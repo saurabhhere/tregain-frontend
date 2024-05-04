@@ -1,6 +1,6 @@
 import * as React from "react";
 import { styled } from "@mui/material/styles";
-import { Box, ListItem, TextField, Typography } from "@mui/material";
+import { Box, ListItem, TextField, TextareaAutosize, Typography } from "@mui/material";
 
 export const SearchBox = styled(TextField)(({ theme }) => ({
   border: "none",
@@ -65,3 +65,18 @@ export const GreyText = styled(Typography)(({ theme }) => ({
   fontSize: theme.typography.pxToRem(15),
   color: '#616161'
 }));
+
+export const StyledTextarea = styled(TextareaAutosize)({
+  width: '100%',
+  padding: '10px',
+  fontSize: '1rem',
+  borderRadius: '4px',
+  border: '1px solid #bdbdbd',
+  transition: 'border-color 0.2s ease-in-out',
+  '&:focus': {
+    outline: 'none',
+    borderColor: '#1976d2',
+  },
+  marginBottom: '10px',
+  fontFamily: 'Inter'
+});
