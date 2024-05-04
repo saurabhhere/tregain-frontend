@@ -1,7 +1,7 @@
 import axios from "axios";
 import { createBrowserHistory } from "history";
 const development = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
-export const BASE_URL = development ? "http://localhost:5000" : "" 
+export const BASE_URL = development ? "http://localhost:5000" : "https://tregain-backend.vercel.app" 
 
 const customHistory = createBrowserHistory();
 
