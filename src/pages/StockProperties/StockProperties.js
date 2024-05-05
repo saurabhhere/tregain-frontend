@@ -22,11 +22,13 @@ import {
   CategoryListItem,
   SectionBox,
   SectionBoxHeading,
+  SimpleButton,
   StyledTextarea,
 } from "../../components/Components";
 import EditIcon from "@mui/icons-material/Edit";
 import IconButton from "@mui/material/IconButton";
 import { showError, showSnackbar } from "../../redux/actions/auth";
+import { handleOpenLink } from "../../utils/helper";
 
 const StockProperties = ({ user }) => {
   const InitState = {
@@ -126,6 +128,22 @@ const StockProperties = ({ user }) => {
     }
   };
 
+  const handleOpenScreener = (stock) => {
+    handleOpenLink(`https://www.screener.in/company/${stock.symbol}`);
+  };
+
+  const handleOpenGroww = async (growwSearchId) => {
+    handleOpenLink(
+      `https://groww.in/charts/stocks/${growwSearchId}?exchange=NSE`
+    );
+  };
+
+  const handleOpenTradingView = async (nseSymbol) => {
+    handleOpenLink(
+      `https://in.tradingview.com/chart/VzChbHge/?symbol=NSE%3A${nseSymbol}`
+    );
+  };
+
   const renderEditModal = () => {
     return (
       <GeneralModal
@@ -180,7 +198,7 @@ const StockProperties = ({ user }) => {
           minRows={3}
           name="fundamentals"
           color="primary"
-          style={{width: '100%'}}
+          style={{ width: "100%" }}
           // sx={{ mb: 2 }}
         />
         <StyledTextarea
@@ -193,7 +211,7 @@ const StockProperties = ({ user }) => {
           multiline
           minRows={3}
           name="technicals"
-          style={{width: '100%'}}
+          style={{ width: "100%" }}
           // sx={{ mb: 2 }}
         />
         <TextField
@@ -243,24 +261,28 @@ const StockProperties = ({ user }) => {
               ref={contentRef}
               style={{
                 overflow: "hidden",
-                height: showReadMore && (properties.fundamentals || properties.technicals) ? "30vh" : "auto",
+                height:
+                  showReadMore &&
+                  (properties.fundamentals || properties.technicals)
+                    ? "30vh"
+                    : "auto",
                 transition: "height 2s",
               }}
             >
               {properties.fundamentals && (
                 <SectionBox>
                   <SectionBoxHeading>Fundamentals:</SectionBoxHeading>
-                  {properties.fundamentals.split('\n').map((line, index) => 
+                  {properties.fundamentals.split("\n").map((line, index) => (
                     <Typography key={index}>{line}</Typography>
-                  )}
+                  ))}
                 </SectionBox>
               )}
               {properties.technicals && (
                 <SectionBox>
                   <SectionBoxHeading>Technical Analysis:</SectionBoxHeading>
-                  {properties.technicals.split('\n').map((line, index) => 
+                  {properties.technicals.split("\n").map((line, index) => (
                     <Typography key={index}>{line}</Typography>
-                  )}
+                  ))}
                 </SectionBox>
               )}
             </Box>
@@ -273,9 +295,26 @@ const StockProperties = ({ user }) => {
               </Button>
             )}
           </Box>
-          <IconButton onClick={handleOpenModal}>
-            <EditIcon color="primary" />
-          </IconButton>
+          <Box>
+            <SimpleButton
+              onClick={() => handleOpenTradingView(properties.stockId.symbol)}
+            >
+              TradingView
+            </SimpleButton>
+            <SimpleButton
+              onClick={() => handleOpenGroww(properties.stockId.growwSearchId)}
+            >
+              Groww
+            </SimpleButton>
+            <SimpleButton
+              onClick={() => handleOpenScreener(properties.stockId)}
+            >
+              Screener
+            </SimpleButton>
+            <IconButton onClick={handleOpenModal}>
+              <EditIcon color="primary" />
+            </IconButton>
+          </Box>
         </Box>
       ) : (
         <div style={{ padding: "20px" }}>No stock selected.</div>

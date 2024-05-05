@@ -1,6 +1,6 @@
 import * as React from "react";
 import { styled } from "@mui/material/styles";
-import { Box, ListItem, TextField, TextareaAutosize, Typography } from "@mui/material";
+import { Box, Button, ListItem, TextField, TextareaAutosize, Typography } from "@mui/material";
 
 export const SearchBox = styled(TextField)(({ theme }) => ({
   border: "none",
@@ -80,3 +80,9 @@ export const StyledTextarea = styled(TextareaAutosize)({
   marginBottom: '10px',
   fontFamily: 'Inter'
 });
+
+export const SimpleButton = styled(Button)({
+  textTransform: 'capitalize',
+  border: '1px solid',
+  marginRight: 5
+})

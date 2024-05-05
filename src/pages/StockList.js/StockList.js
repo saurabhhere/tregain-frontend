@@ -20,8 +20,13 @@ import {
   handleActiveStock,
 } from "../../redux/actions/user";
 import SearchIcon from "@mui/icons-material/Search";
-import { SearchBox, StockListItem } from "../../components/Components";
+import {
+  SearchBox,
+  SimpleButton,
+  StockListItem,
+} from "../../components/Components";
 import { showError, showSnackbar } from "../../redux/actions/auth";
+import { handleOpenLink } from "../../utils/helper";
 
 function StockList({ user }) {
   const InitState = {
@@ -48,22 +53,22 @@ function StockList({ user }) {
   const [selectedStock, setSelectedStock] = useState(null);
 
   useEffect(() => {
-    fetchStockOptions()
-  },[])
+    fetchStockOptions();
+  }, []);
 
   const fetchStockOptions = async () => {
     try {
       getAllStocks()
         .then((res) => {
-          console.log("getAllStocks", res.data)
-          setStockOptions(res.data)
+          console.log("getAllStocks", res.data);
+          setStockOptions(res.data);
         })
         .catch((err) => {
           dispatch(showError(err));
-          console.error("Error while fetching all stocks", err)
-        })
+          console.error("Error while fetching all stocks", err);
+        });
     } catch (error) {
-      console.error('Error fetching options:', error);
+      console.error("Error fetching options:", error);
     }
   };
 
@@ -85,21 +90,23 @@ function StockList({ user }) {
   const handleSearchChange = (event) => {
     const searchTerm = event.target.value.toLowerCase();
     setSearchTerm(searchTerm);
-    const filtered = user.availableStocks.filter((stock) =>
-      stock.name.toLowerCase().includes(searchTerm)
+    const filtered = user.availableStocks.filter(
+      (stock) =>
+        stock.name.toLowerCase().includes(searchTerm) ||
+        stock.symbol.toLowerCase().includes(searchTerm)
     );
     setFilteredStocks(filtered);
   };
 
   const handleOpenModal = () => {
     setOpenModal(true);
-    if (stockOptions.length == 0) fetchStockOptions()
+    if (stockOptions.length == 0) fetchStockOptions();
   };
 
   // Close modal
   const handleCloseModal = () => {
     setOpenModal(false);
-    setSelectedStock(null)
+    setSelectedStock(null);
   };
 
   const handleSubmit = () => {
@@ -108,7 +115,7 @@ function StockList({ user }) {
         dispatch(showSnackbar("Added Stock successfully", "success", 4000));
         handleResetForm();
         handleCloseModal();
-        setSelectedStock(null)
+        setSelectedStock(null);
         dispatch(getAvailableStocks());
       })
       .catch((err) => {
@@ -122,7 +129,9 @@ function StockList({ user }) {
         name: form.categoryName,
       })
         .then((res) => {
-          dispatch(showSnackbar("Added Category successfully", "success", 4000));
+          dispatch(
+            showSnackbar("Added Category successfully", "success", 4000)
+          );
           handleResetForm();
           setOpenCategoryModal(false);
           dispatch(getAvailableCategories());
@@ -162,7 +171,7 @@ function StockList({ user }) {
               fullWidth
             />
           )}
-          style={{marginBottom : 10}}
+          style={{ marginBottom: 10 }}
         />
       </GeneralModal>
     );
@@ -188,8 +197,21 @@ function StockList({ user }) {
     );
   };
 
+  const openResultCalender = () => {
+    handleOpenLink(
+      "https://www.moneycontrol.com/markets/earnings/results-calendar/"
+    );
+  };
+
   return (
-    <Box sx={{ backgroundColor: "#f0f0f0", overflowY: "auto", height: "100vh", position: 'relative' }}>
+    <Box
+      sx={{
+        backgroundColor: "#f0f0f0",
+        overflowY: "auto",
+        height: "100vh",
+        position: "relative",
+      }}
+    >
       <Box p={2}>
         <SearchBox
           fullWidth
@@ -205,7 +227,7 @@ function StockList({ user }) {
         />
       </Box>
 
-      <List style={{ width: "100%"}}>
+      <List style={{ width: "100%" }}>
         {filteredStocks.map((stock) => (
           <StockListItem
             style={
@@ -221,15 +243,20 @@ function StockList({ user }) {
         ))}
       </List>
 
-      <Box position={'sticky'} bottom={20} p={2} style={{background: '#f0f0f0'}}>
-        <Box>
-          <Button fullWidth variant="contained" onClick={handleOpenModal}>
+      <Box
+        position={"sticky"}
+        bottom={20}
+        p={2}
+        style={{ background: "#f0f0f0" }}
+      >
+        <SimpleButton onClick={openResultCalender}>
+          Result Calendar
+        </SimpleButton>
+        <Box paddingTop={2}>
+          <Button variant="contained" onClick={handleOpenModal} style={{marginRight: 5}}>
             Add Stock
           </Button>
-        </Box>
-        <Box paddingTop={2}>
           <Button
-            fullWidth
             variant="contained"
             onClick={() => setOpenCategoryModal(true)}
           >
